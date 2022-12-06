@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/smart-tron-scan/static/css/main.d7e26831.css",
+    "main.js": "/smart-tron-scan/static/js/main.1a4cae93.js",
+    "index.html": "/smart-tron-scan/index.html",
+    "main.d7e26831.css.map": "/smart-tron-scan/static/css/main.d7e26831.css.map",
+    "main.1a4cae93.js.map": "/smart-tron-scan/static/js/main.1a4cae93.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d7e26831.css",
+    "static/js/main.1a4cae93.js"
+  ]
+}
