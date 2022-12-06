@@ -42,8 +42,8 @@ export default function BalancesTable({ setContractToViewEvents }) {
                             {contract.balance}
                             <img
                                 className="mx-1"
-                                src={`/coin_icons/${contract.type === 0 ? 'trx' : 'usdt'}-logo.png`}
-                                alt={contract.type === 0 ? 'trx' : 'usdt'}
+                                src={`/${contract.type === 0 ? 'trx' : 'usdt'}-logo.png`}
+                                alt={contract.type === 0 ? 'TRX' : 'USDT'}
                                 width={15}
                                 height={15}
                             />
