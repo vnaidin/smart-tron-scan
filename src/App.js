@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Container, Row, Spinner } from 'react-bootstrap';
+import { Container, Row } from 'react-bootstrap';
 import './App.css';
-import { BalancesTable, TransactionsTable } from './components';
+import { BalancesTable, TransactionsTable,TronExtensionChecker } from './components';
 import { useCheckTronInitiated, useTrackWalletChange } from './hooks';
 
 function App() {
@@ -56,7 +56,7 @@ function App() {
         </Row>
       </main>
     </Container> :
-    <Spinner animation='border'></Spinner>
+    <TronExtensionChecker/>
 }
 
 export default App;
