@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Container, Row } from 'react-bootstrap';
 import './App.css';
-import { BalancesTable, TransactionsTable,TronExtensionChecker } from './components';
+import { BalancesTable, TransactionsTable, TronExtensionChecker } from './components';
 import { useCheckTronInitiated, useTrackWalletChange } from './hooks';
 
 function App() {
@@ -11,7 +11,6 @@ function App() {
   const [contractToViewEvents, setContractToViewEvents] = useState();
 
   useTrackWalletChange();
-
 
   return allowedRendering ?
     <Container>
@@ -56,7 +55,7 @@ function App() {
         </Row>
       </main>
     </Container> :
-    <TronExtensionChecker/>
+    <TronExtensionChecker />
 }
 
 export default App;

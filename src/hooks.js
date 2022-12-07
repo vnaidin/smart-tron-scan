@@ -61,32 +61,19 @@ export function useGetContractBalances() {
 }
 
 export function useGetContractEvents(contractAddress) {
-    const TronGrid = require('trongrid');
-    const TronWeb = require('tronweb');
 
-    const tronWeb1 = new TronWeb({
-        fullHost: 'https://api.trongrid.io'
-    });
 
-    const tronGrid = new TronGrid(tronWeb1);
 
     const [contractTransactions, setContractTransactions] = useState()
 
     async function getTransactions() {
+        const options = { method: 'GET', headers: { accept: 'application/json' } };
 
-        const options = {
-            only_to: true,
-            only_confirmed: true,
-            limit: 40,
-        };
+        fetch(`https://apilist.tronscanapi.com/api/transaction?sort=-timestamp&count=true&limit=40&start=0&address=${contractAddress}`, options)
+            .then(response => response.json())
+            .then(response => { setContractTransactions(response.data) })
+            .catch(err => console.error(err));
 
-        // callback
-        tronGrid.account.getTransactions(contractAddress, options, (err, transactions) => {
-            if (err)
-                return console.error(err);
-
-            setContractTransactions(transactions.data);
-        });
     }
 
     useEffect(() => {

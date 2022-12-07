@@ -4,16 +4,12 @@
   "private": true,
   "homepage": "https://vnaidin.github.io/smart-tron-scan",
   "dependencies": {
-    "@testing-library/jest-dom": "^5.16.5",
     "bootstrap": "^5.2.3",
     "gh-pages": "^4.0.0",
-    "querystring-es3": "^0.2.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.6.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1",
-    "trongrid": "^1.2.6",
-    "tronweb": "^4.4.0"
+    "react-scripts": "5.0.1"
   },
   "scripts": {
     "predeploy": "npm run build",

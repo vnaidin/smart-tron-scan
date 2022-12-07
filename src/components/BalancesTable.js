@@ -42,7 +42,7 @@ export default function BalancesTable({ setContractToViewEvents }) {
                             {contract.balance}
                             <img
                                 className="mx-1"
-                                src={`/${contract.type === 0 ? 'trx' : 'usdt'}-logo.png`}
+                                src={`/smart-tron-scan/${contract.type === 0 ? 'trx' : 'usdt'}-logo.png`}
                                 alt={contract.type === 0 ? 'TRX' : 'USDT'}
                                 width={15}
                                 height={15}
