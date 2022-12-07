@@ -1,15 +1,14 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import {
-  Spinner, Table, Button, Col, Row,
+  Spinner, Table, Button, Col,
 } from 'react-bootstrap';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import PropTypes from 'prop-types';
-import { useGetContractBalances } from '../hooks';
+import { useGetContractBalances } from '../../hooks';
+import SendMoney from './SendMoney';
 
 export default function BalancesTable({ setContractToViewEvents }) {
-  const { tronWeb } = window;
   const contractBalances = useGetContractBalances();
-  const inpRef = useRef();
   const minimizeHashes = (link, nOfSymbols = 4) => (link && link.length !== 0 ? `${link.substring(0, nOfSymbols)}...${link.substring(link.length - nOfSymbols)}` : '');
 
   return (
@@ -58,35 +57,10 @@ export default function BalancesTable({ setContractToViewEvents }) {
 
                 <td className="row m-0">
                   <Col>
-                    <Row style={{ width: '10em' }}>
-                      <input
-                        type="number"
-                        min={1000}
-                        defaultValue={contract.type === 1 ? 1000 : 20000}
-                        ref={inpRef}
-                        placeholder="amount"
-                        name="send-tokens"
-                      />
-                      <Button
-                        id="my-nft-btns"
-                        variant="primary"
-                        size="sm"
-                        onClick={() => {
-                          if (contract.type === 1) {
-                            return tronWeb.contract().at('TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t').then((usdtContract) => usdtContract.transfer(contract.address, tronWeb.toSun(inpRef.current?.value)).send());
-                          }
-
-                          return tronWeb.trx.sendTransaction(
-                            contract.address,
-                            tronWeb.toSun(inpRef.current?.value),
-                          );
-                        }}
-                        type="button"
-                      >
-                        Send
-                        {contract.type === 0 ? 'TRX' : 'USDT'}
-                      </Button>
-                    </Row>
+                    <SendMoney
+                      contractAddress={contract.address}
+                      contractType={contract.type}
+                    />
                   </Col>
 
                   <Col className="align-items-center">
