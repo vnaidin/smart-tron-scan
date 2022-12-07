@@ -49,7 +49,9 @@ export default function TransactionsTable({ contractToViewEvents }) {
                   <td>
                     <OverlayTrigger
                       trigger="click"
+                      placement="auto"
                       rootClose
+                      rootCloseEvent="click"
                       overlay={(
                         <Popover id="popover-basic">
                           <Popover.Header as="h3">Transaction Data</Popover.Header>

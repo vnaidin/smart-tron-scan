@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import {
-  Spinner, Table, Button, Popover, OverlayTrigger, Col,
+  Spinner, Table, Button, Col, Row,
 } from 'react-bootstrap';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import PropTypes from 'prop-types';
@@ -58,52 +58,47 @@ export default function BalancesTable({ setContractToViewEvents }) {
 
                 <td className="row m-0">
                   <Col>
-                    <OverlayTrigger
-                      trigger="click"
-                      placement="top"
-                      rootClose
-                      rootCloseEvent="click"
-                      overlay={(
-                        <Popover>
-                          <Popover.Body className="d-flex flex-column gap-2">
-                            <input
-                              type="number"
-                              min={1000}
-                              defaultValue={contract.type === 1 ? 1000 : 20000}
-                              ref={inpRef}
-                              placeholder="amount"
-                                                // eslint-disable-next-line jsx-a11y/no-autofocus
-                              autoFocus
-                              name="send-tokens"
-                            />
-                            <button
-                              id="my-nft-btns"
-                              onClick={() => {
-                                if (contract.type === 1) {
-                                  return tronWeb.contract().at('TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t').then((usdtContract) => usdtContract.transfer(contract.address, tronWeb.toSun(inpRef.current?.value)).send());
-                                }
+                    <Row style={{ width: '10em' }}>
+                      <input
+                        type="number"
+                        min={1000}
+                        defaultValue={contract.type === 1 ? 1000 : 20000}
+                        ref={inpRef}
+                        placeholder="amount"
+                        name="send-tokens"
+                      />
+                      <Button
+                        id="my-nft-btns"
+                        variant="primary"
+                        size="sm"
+                        onClick={() => {
+                          if (contract.type === 1) {
+                            return tronWeb.contract().at('TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t').then((usdtContract) => usdtContract.transfer(contract.address, tronWeb.toSun(inpRef.current?.value)).send());
+                          }
 
-                                return tronWeb.trx.sendTransaction(
-                                  contract.address,
-                                  tronWeb.toSun(inpRef.current?.value),
-                                );
-                              }}
-                              type="button"
-                            >
-                              Ok
-                            </button>
-                          </Popover.Body>
-                        </Popover>
-)}
-                    >
-                      <Button variant="primary" size="sm">
+                          return tronWeb.trx.sendTransaction(
+                            contract.address,
+                            tronWeb.toSun(inpRef.current?.value),
+                          );
+                        }}
+                        type="button"
+                      >
                         Send
                         {contract.type === 0 ? 'TRX' : 'USDT'}
                       </Button>
-                    </OverlayTrigger>
+                    </Row>
                   </Col>
 
-                  <Col><Button variant="secondary" size="sm" onClick={() => setContractToViewEvents(contract.address)}>Show Events</Button></Col>
+                  <Col className="align-items-center">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => setContractToViewEvents(contract.address)}
+                    >
+                      Show Events
+                    </Button>
+
+                  </Col>
 
                 </td>
               </tr>
