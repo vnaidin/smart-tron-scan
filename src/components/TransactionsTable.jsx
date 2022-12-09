@@ -6,12 +6,25 @@ import {
 import PropTypes from 'prop-types';
 import { useGetContractEvents } from '../hooks';
 import { SMART_CONTRACT_ADDRESSES } from '../constants';
+import CopyButton from './CopyButton';
 
 export default function TransactionsTable({ contractToViewEvents }) {
   const { tronWeb } = window;
   const currentEvents = useGetContractEvents(contractToViewEvents);
   const minimizeHashes = (link, nOfSymbols = 4) => (link && link.length !== 0 ? `${link.substring(0, nOfSymbols)}...${link.substring(link.length - nOfSymbols)}` : '');
 
+  const analyzeTriggerInfoData = (dataString, methodString) => {
+    switch (dataString.substring(0, 8)) {
+      case 'ab94d950':
+        return 'deposit()';
+
+      case '3ccfd60b':
+        return 'withdraw()';
+
+      default:
+        return methodString;
+    }
+  };
   return (
     <>
       <h4 style={{ overflowWrap: 'break-word' }}>
@@ -25,7 +38,9 @@ export default function TransactionsTable({ contractToViewEvents }) {
             <th>From_Wallet</th>
             <th>Data</th>
             <th>Date</th>
+            <th>Amount</th>
             <th>Results</th>
+            <th>Cost</th>
           </tr>
         </thead>
         {currentEvents
@@ -41,6 +56,7 @@ export default function TransactionsTable({ contractToViewEvents }) {
                     >
                       {minimizeHashes(event.hash, 7)}
                     </a>
+                    <CopyButton txtToCopy={event.hash} />
                   </td>
 
                   <td>
@@ -56,22 +72,34 @@ export default function TransactionsTable({ contractToViewEvents }) {
                         <Popover id="popover-basic">
                           <Popover.Header as="h3">Transaction Data</Popover.Header>
                           <Popover.Body>
-                            {event.trigger_info ? Object.entries(event.trigger_info).map(
-                              ([key, value]) => (
-                                <p key={event.hash + key}>
-                                  {key}
+                            {event.trigger_info ? (
+                              <>
+                                {/* <p>
+                                  data :
                                   {' '}
-                                  :
+                                  {event.trigger_info?.data}
+                                </p> */}
+                                <p>
+                                  method :
                                   {' '}
-                                  {typeof value === 'string' ? value : Object.entries(value).toString()}
+                                  {analyzeTriggerInfoData(
+                                    event.trigger_info?.data,
+                                    event.trigger_info?.method,
+                                  )}
                                 </p>
-                              ),
-                            ) : 'no data!'}
+                                {Object.keys(event.trigger_info?.parameter).length > 0 ? (
+                                  <p>
+                                    {'parameter :\n'}
+                                    { Object.entries(event.trigger_info?.parameter).map(([k, v]) => `\n${k}:${v}`) }
+                                  </p>
+                                ) : null}
+                              </>
+                            ) : 'No data!'}
                           </Popover.Body>
                         </Popover>
 )}
                     >
-                      <Button variant="success">More info</Button>
+                      <Button variant={event.trigger_info ? 'success' : 'warning'}>{event.trigger_info ? 'More info' : 'No data!'}</Button>
                     </OverlayTrigger>
                   </td>
 
@@ -80,7 +108,40 @@ export default function TransactionsTable({ contractToViewEvents }) {
                   </td>
 
                   <td>
+                    {tronWeb.fromSun(event.amount)}
+                  </td>
+
+                  <td>
                     <Button variant={event.contractRet === 'SUCCESS' ? 'success' : 'danger'}>{event.contractRet}</Button>
+                  </td>
+
+                  <td>
+                    <OverlayTrigger
+                      trigger="click"
+                      placement="auto"
+                      rootClose
+                      rootCloseEvent="click"
+                      overlay={(
+                        <Popover id="popover-basic">
+                          <Popover.Header as="h3">Transaction Costs</Popover.Header>
+                          <Popover.Body>
+                            {event.cost ? Object.entries(event.cost).map(
+                              ([key, value]) => (
+                                <p key={event.hash + key}>
+                                  {key}
+                                  {' '}
+                                  :
+                                  {' '}
+                                  {typeof value === 'string' ? value : value}
+                                </p>
+                              ),
+                            ) : 'no data!'}
+                          </Popover.Body>
+                        </Popover>
+)}
+                    >
+                      <Button variant="success">Costs</Button>
+                    </OverlayTrigger>
                   </td>
 
                 </tr>

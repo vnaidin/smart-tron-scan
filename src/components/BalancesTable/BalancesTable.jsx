@@ -6,6 +6,7 @@ import {
 import PropTypes from 'prop-types';
 import { useGetContractBalances } from '../../hooks';
 import SendMoney from './SendMoney';
+import CopyButton from '../CopyButton';
 
 export default function BalancesTable({ setContractToViewEvents }) {
   const contractBalances = useGetContractBalances();
@@ -42,6 +43,7 @@ export default function BalancesTable({ setContractToViewEvents }) {
                   >
                     {minimizeHashes(contract.address, 7)}
                   </a>
+                  <CopyButton txtToCopy={contract.address} />
                 </td>
 
                 <td>
