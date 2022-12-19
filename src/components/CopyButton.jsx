@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import PropTypes from 'prop-types';
 
 export default function CopyButton({ txtToCopy }) {
@@ -10,7 +9,7 @@ export default function CopyButton({ txtToCopy }) {
       onClick={() => {
         if (navigator && navigator.clipboard) {
           navigator.clipboard.writeText(txtToCopy).then(() => {
-            console.log('copied successfully!');
+            console.log(txtToCopy);
           }, (err) => {
             console.error(err);
           });

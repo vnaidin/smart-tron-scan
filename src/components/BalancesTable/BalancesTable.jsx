@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Spinner, Table, Button, Col,
 } from 'react-bootstrap';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import PropTypes from 'prop-types';
 import { useGetContractBalances } from '../../hooks';
 import SendMoney from './SendMoney';
@@ -41,7 +40,7 @@ export default function BalancesTable({ setContractToViewEvents }) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    {minimizeHashes(contract.address, 7)}
+                    {minimizeHashes(contract.address, 5)}
                   </a>
                   <CopyButton txtToCopy={contract.address} />
                 </td>

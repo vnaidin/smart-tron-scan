@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import React, { useRef } from 'react';
 import { Button, Row } from 'react-bootstrap';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import PropTypes from 'prop-types';
 
 export default function SendMoney({ contractType, contractAddress }) {

@@ -81,3 +81,30 @@ export function useGetContractEvents(contractAddress) {
   }, [contractAddress]);
   return contractTransactions;
 }
+
+export function useGetMoreTransactionsInfo(event) {
+  const { tronWeb } = window;
+
+  const [addTransactionInfo, setAddTransactionInfo] = useState();
+
+  useEffect(() => {
+    tronWeb.getEventByTransactionID(event.hash).then((result) => {
+      setAddTransactionInfo({
+        name: result[0]?.name,
+        // eslint-disable-next-line no-underscore-dangle
+        amount: tronWeb.fromSun(result[0]?.result?._amount),
+      });
+    });
+    tronWeb.contract().at(event.toAddress).then(
+      (contr) => {
+        contr.blacklisted(event.ownerAddress).call({}).then((isInRefsRegistry) => {
+          setAddTransactionInfo((prev) => ({
+            ...prev,
+            blacklisted: isInRefsRegistry,
+          }));
+        });
+      },
+    );
+  }, [event]);
+  return addTransactionInfo;
+}
