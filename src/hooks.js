@@ -92,7 +92,7 @@ export function useGetMoreTransactionsInfo(event) {
       setAddTransactionInfo({
         name: result[0]?.name,
         // eslint-disable-next-line no-underscore-dangle
-        amount: tronWeb.fromSun(result[0]?.result?._amount),
+        amount: +tronWeb.fromSun(result[0]?.result?._amount),
       });
     });
     tronWeb.contract().at(event.toAddress).then(

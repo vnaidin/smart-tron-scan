@@ -9,7 +9,7 @@ const MoreInfoOverlay = React.forwardRef((props, ref) => {
   const analyzeTriggerInfoData = (dataString, methodString) => {
     switch (dataString.substring(0, 8)) {
       case 'ab94d950':
-        return `deposit(${addTransactionInfo?.amount})`;
+        return `deposit(${addTransactionInfo?.amount === 0 ? tronWeb.fromSun(props.event.amount) : addTransactionInfo?.amount})`;
 
       case '3ccfd60b':
         return `withdraw(${addTransactionInfo?.amount})`;
