@@ -10,6 +10,9 @@ export const SMART_CONTRACT_ADDRESSES = [
     title: 'Smart_Tron_TRX_Pool_21', address: 'TXVnmE2bWcC6vMdnJvAN8qUdVS22Sznggi', type: 0, limit: 25000,
   },
   {
+    title: 'Smart_Tron_TRX_Pool_22_FROZEN', address: 'TCvyKscswHPhS9gsVkGvHGEy29wC2Ry9BE', type: 0, limit: 25000,
+  },
+  {
     title: 'Smart_Tron_TRX_Pool_22', address: 'TKhzZrxs4wULnsmhi1Zn3qmkxF6PVPRZBi', type: 0, limit: 25000,
   },
   {
