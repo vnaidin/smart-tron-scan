@@ -4,9 +4,8 @@ import { SMART_CONTRACT_ADDRESSES } from './constants';
 export function useCheckTronInitiated() {
   const [tronIsOn, setTronIsOn] = useState();
   useEffect(() => {
-    const { tronWeb } = window;
     const loadWatcher = setInterval(() => {
-      if (tronWeb && tronWeb.ready) {
+      if (window.tronWeb && window.tronWeb.ready) {
         setTronIsOn(true);
         clearInterval(loadWatcher);
       } else {
@@ -39,16 +38,15 @@ export function useTrackWalletChange() {
 }
 
 export function useGetContractBalances() {
-  const { tronWeb } = window;
   const [contractBalances, setContractBalances] = useState();
   const fetchData = () => {
     Promise.all(SMART_CONTRACT_ADDRESSES.map((contract) => {
       if (contract.type === 1) {
-        return tronWeb?.contract().at('TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t').then((usdtContract) => usdtContract.balanceOf(contract.address).call({}).then((resultUsdt) => ({ ...contract, balance: +tronWeb.fromSun(resultUsdt) })));
+        return window.tronWeb?.contract().at('TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t').then((usdtContract) => usdtContract.balanceOf(contract.address).call({}).then((resultUsdt) => ({ ...contract, balance: +window.tronWeb.fromSun(resultUsdt) })));
       }
-      return tronWeb?.trx?.getBalance(contract.address).then((resultTrx) => ({
+      return window.tronWeb?.trx?.getBalance(contract.address).then((resultTrx) => ({
         ...contract,
-        balance: +tronWeb.fromSun(resultTrx),
+        balance: +window.tronWeb.fromSun(resultTrx),
       }));
     })).then((result) => setContractBalances(result));
   };

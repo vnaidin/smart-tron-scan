@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Spinner, Table, Button, Col,
+  Spinner, Table, Button, Col, Badge,
 } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { useGetContractBalances } from '../../hooks';
@@ -12,7 +12,7 @@ export default function BalancesTable({ setContractToViewEvents }) {
   const minimizeHashes = (link, nOfSymbols = 4) => (link && link.length !== 0 ? `${link.substring(0, nOfSymbols)}...${link.substring(link.length - nOfSymbols)}` : '');
 
   return (
-    <Table striped bordered hover size="sm" responsive>
+    <Table bordered hover size="sm" responsive>
       <thead>
         <tr>
           <th>Title</th>
@@ -24,15 +24,20 @@ export default function BalancesTable({ setContractToViewEvents }) {
       {contractBalances
         ? (
           <tbody>
-
             {contractBalances.map((contract) => (
               <tr
                 key={contract.address}
-                style={{ border: contract?.limit >= contract.balance ? '10px solid red' : 'none' }}
               >
-                <td>
-                  {contract.title}
-                </td>
+                <Badge
+                  bg={contract?.limit >= contract.balance ? 'danger' : 'success'}
+                  as="td"
+                  className="ml-1 "
+                >
+                  <h6>
+                    {' '}
+                    {contract.title}
+                  </h6>
+                </Badge>
 
                 <td>
                   <a
@@ -70,7 +75,7 @@ export default function BalancesTable({ setContractToViewEvents }) {
                       size="sm"
                       onClick={() => setContractToViewEvents(contract.address)}
                     >
-                      Show Events
+                      Transactions
                     </Button>
 
                   </Col>
