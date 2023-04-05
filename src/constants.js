@@ -7,7 +7,7 @@ export const SMART_CONTRACT_ADDRESSES = [
     title: 'Gulfstream_USDT_Staking', address: 'TT9iHjN8bfqytanK8XazweHTcDF114G8ds', type: 1, limit: 1500,
   },
   {
-    title: 'Gulfstream_BONUS_TRX_Staking', address: 'TRag8cBfa3n7CSN8v96whDKTshyU18m3Ww', type: 0, limit: 15000,
+    title: 'Gulfstream_BONUS_TRX_Staking', address: 'TF95WcdsWCv7q32gxvYH388yZ2PHnADpM3', type: 0, limit: 15000,
   },
   {
     title: 'Smart_Tron_TRX_Pool_20', address: 'TRB3TXhM8rcGDpcbz3o5HoC6kvp2Kyv7py', type: 0, limit: 15000,
