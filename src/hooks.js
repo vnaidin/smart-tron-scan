@@ -38,24 +38,35 @@ export function useTrackWalletChange() {
 }
 
 export function useGetContractBalances() {
-  const [contractBalances, setContractBalances] = useState();
+  const [contractBalances, setContractBalances] = useState([]);
+  async function getAmount(contract, currency) {
+    const options = { method: 'GET', headers: { accept: 'application/json' }, mode: 'cors' };
+
+    return fetch(`https://apilist.tronscanapi.com/api/account/tokens?address=${contract.address}&token=${currency}`, options)
+      .then((response) => response.json())
+      .then((response) => {
+        const formedResponse = response.data.shift();
+        // console.log(formedResponse, { ...contract, balance: formedResponse.amount });
+        return ({ ...contract, balance: window.tronWeb.fromSun(formedResponse?.balance) || 0 });
+      })
+      // eslint-disable-next-line no-console
+      .catch((err) => console.error(err));
+  }
+
   const fetchData = () => {
     Promise.all(SMART_CONTRACT_ADDRESSES.map((contract) => {
-      if (contract.type === 1) {
-        return window.tronWeb?.contract().at('TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t').then((usdtContract) => usdtContract.balanceOf(contract.address).call({}).then((resultUsdt) => ({ ...contract, balance: +window.tronWeb.fromSun(resultUsdt) })));
+      if (contract.type === 'usdt') {
+        return getAmount(contract, 'usdt');
       }
-      return window.tronWeb?.trx?.getBalance(contract.address).then((resultTrx) => ({
-        ...contract,
-        balance: +window.tronWeb.fromSun(resultTrx),
-      }));
-    })).then((result) => setContractBalances(result));
+      return getAmount(contract, 'trx');
+    })).then((result) => {
+      setContractBalances(result);
+    });
   };
+
   useEffect(() => {
-    fetchData();
-    setInterval(() => {
-      fetchData();
-    }, 1000 * 60 * 5);
-  }, []);
+    if (contractBalances.length === 0) { fetchData(); }
+  }, [contractBalances]);
   return contractBalances;
 }
 

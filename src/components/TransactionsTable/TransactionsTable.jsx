@@ -17,7 +17,9 @@ export default function TransactionsTable({ contractToViewEvents }) {
     <>
       <h4 style={{ overflowWrap: 'break-word' }}>
         Contract:
-        {contractToViewEvents}
+        {' '}
+        {SMART_CONTRACT_ADDRESSES.find((addr) => addr.address === contractToViewEvents).title}
+        {` (${contractToViewEvents})`}
       </h4>
       <Table striped bordered hover size="sm" responsive>
         <thead>

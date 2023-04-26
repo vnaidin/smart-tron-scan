@@ -10,7 +10,6 @@ import CopyButton from '../CopyButton';
 export default function BalancesTable({ setContractToViewEvents }) {
   const contractBalances = useGetContractBalances();
   const minimizeHashes = (link, nOfSymbols = 4) => (link && link.length !== 0 ? `${link.substring(0, nOfSymbols)}...${link.substring(link.length - nOfSymbols)}` : '');
-
   return (
     <Table bordered hover size="sm" responsive>
       <thead>
@@ -54,7 +53,7 @@ export default function BalancesTable({ setContractToViewEvents }) {
                   {contract.balance}
                   <img
                     className="mx-1"
-                    src={`/smart-tron-scan/${contract.type === 0 ? 'trx' : 'usdt'}-logo.png`}
+                    src={`/smart-tron-scan/${contract.type === 'trx' ? 'trx' : 'usdt'}-logo.png`}
                     alt={contract.type === 0 ? 'TRX' : 'USDT'}
                     width={15}
                     height={15}
