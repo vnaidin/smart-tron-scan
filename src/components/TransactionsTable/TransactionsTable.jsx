@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  Spinner, Table, Button, OverlayTrigger, Popover,
+  Spinner, Table, Button, OverlayTrigger, Popover, Pagination, Form, Row,
 } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { useGetContractEvents } from '../../hooks';
@@ -9,18 +9,57 @@ import CopyButton from '../CopyButton';
 import MoreInfoOverlay from './TransactionMoreInfoOverlay';
 
 export default function TransactionsTable({ contractToViewEvents }) {
+  const [currentPage, setCurrentPage] = useState(0);
+  const [currentMethod, setCurrentMethod] = useState();
   const { tronWeb } = window;
-  const currentEvents = useGetContractEvents(contractToViewEvents);
+  const { data, total } = useGetContractEvents(contractToViewEvents, +currentPage, currentMethod);
   const minimizeHashes = (link, nOfSymbols = 4) => (link && link.length !== 0 ? `${link.substring(0, nOfSymbols)}...${link.substring(link.length - nOfSymbols)}` : '');
 
+  const paginationItems = Array(total ? Math.round(total / 50) + 1 : 1).fill(0).map((x, i) => (
+    // eslint-disable-next-line react/no-array-index-key
+    <Pagination.Item key={`page-${i}`} active={i === currentPage} onClick={() => setCurrentPage(i)}>
+      {i}
+    </Pagination.Item>
+  )).slice(currentPage, currentPage + 3);
+  const currentSmartContract = SMART_CONTRACT_ADDRESSES.find(
+    (addr) => addr.address === contractToViewEvents,
+  );
   return (
     <>
-      <h4 style={{ overflowWrap: 'break-word' }}>
+      <h4 style={{ overflowWrap: 'break-word ' }}>
         Contract:
         {' '}
-        {SMART_CONTRACT_ADDRESSES.find((addr) => addr.address === contractToViewEvents).title}
+        {currentSmartContract.title}
         {` (${contractToViewEvents})`}
       </h4>
+
+      <Row className="my-2 d-flex">
+
+        <Pagination style={{ width: 'auto' }} className="my-0 mx-3">
+          <Pagination.First onClick={() => setCurrentPage(1)} />
+          <Pagination.Prev onClick={() => setCurrentPage((prev) => prev - 1)} />
+          {paginationItems}
+          <Pagination.Next onClick={() => setCurrentPage((prev) => prev + 1)} />
+          <Pagination.Last onClick={() => setCurrentPage(Math.floor(total / 50))} />
+        </Pagination>
+
+        {currentSmartContract.methods
+  && (
+  <Form.Select
+    aria-label="Default select example"
+    onChange={(e) => { setCurrentMethod(e.target.value); setCurrentPage(0); }}
+    style={{ width: 'auto' }}
+  >
+    <option>select method</option>
+    <option value={null}>-</option>
+    {Object.entries(
+      currentSmartContract.methods,
+    ).map(([methText, methCode]) => (
+      <option key={methCode} value={methCode}>{methText}</option>
+    ))}
+  </Form.Select>
+  )}
+      </Row>
       <Table striped bordered hover size="sm" responsive>
         <thead>
           <tr>
@@ -28,15 +67,15 @@ export default function TransactionsTable({ contractToViewEvents }) {
             <th>From_Wallet</th>
             <th>Data</th>
             <th>Date</th>
-            {/* <th>Amount</th> */}
-            <th>Results</th>
+            <th>Amount</th>
+            {/* <th>Results</th> */}
             <th>Cost</th>
           </tr>
         </thead>
-        {currentEvents
+        {data
           ? (
             <tbody>
-              {currentEvents.map((event) => (
+              {data?.map((event) => (
                 <tr key={event.hash}>
                   <td>
                     <a
@@ -69,13 +108,17 @@ export default function TransactionsTable({ contractToViewEvents }) {
                     {new Date(event.timestamp).toLocaleString()}
                   </td>
 
-                  {/* <td>
-                    {tronWeb.fromSun(event.amount)}
-                  </td> */}
-
                   <td>
-                    <Button variant={event.contractRet === 'SUCCESS' ? 'success' : 'danger'}>{event.contractRet}</Button>
+                    {tronWeb.fromSun(event.amount)}
+                    {' '}
+                    TRX
                   </td>
+
+                  {/* <td>
+                    <Button
+                    variant={event.contractRet === 'SUCCESS' ? 'success' : 'danger'}>
+                    {event.contractRet}</Button>
+                  </td> */}
 
                   <td>
                     <OverlayTrigger
@@ -113,12 +156,21 @@ export default function TransactionsTable({ contractToViewEvents }) {
           )
           : <Spinner animation="border" />}
       </Table>
+      <Row className="my-2">
+        <Pagination>
+          <Pagination.First onClick={() => setCurrentPage(1)} />
+          <Pagination.Prev onClick={() => setCurrentPage((prev) => prev - 1)} />
+          {paginationItems}
+          <Pagination.Next onClick={() => setCurrentPage((prev) => prev + 1)} />
+          <Pagination.Last onClick={() => setCurrentPage(Math.floor(total / 50))} />
+        </Pagination>
+      </Row>
     </>
   );
 }
 
 TransactionsTable.defaultProps = {
-  contractToViewEvents: [...SMART_CONTRACT_ADDRESSES].sort(() => 0.5 - Math.random())[0].address,
+  contractToViewEvents: SMART_CONTRACT_ADDRESSES.find((x) => x.title === 'TronTrade').address,
 };
 
 TransactionsTable.propTypes = {

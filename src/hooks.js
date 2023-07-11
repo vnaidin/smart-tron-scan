@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { useEffect, useState } from 'react';
 import { SMART_CONTRACT_ADDRESSES } from './constants';
 
@@ -70,15 +71,15 @@ export function useGetContractBalances() {
   return contractBalances;
 }
 
-export function useGetContractEvents(contractAddress) {
-  const [contractTransactions, setContractTransactions] = useState();
+export function useGetContractEvents(contractAddress, page, method) {
+  const [contractTransactions, setContractTransactions] = useState([]);
 
   async function getTransactions() {
     const options = { method: 'GET', headers: { accept: 'application/json' } };
 
-    fetch(`https://apilist.tronscanapi.com/api/transaction?sort=-timestamp&count=true&limit=40&start=0&address=${contractAddress}`, options)
+    fetch(`https://apilist.tronscanapi.com/api/transaction?sort=-timestamp&count=true&limit=50&start=${50 * page}&address=${contractAddress}${method && method.length > 1 ? `&method=${method}` : ''}`, options)
       .then((response) => response.json())
-      .then((response) => { setContractTransactions(response.data); })
+      .then((response) => { setContractTransactions(response); })
       // eslint-disable-next-line no-console
       .catch((err) => console.error(err));
   }
@@ -87,33 +88,28 @@ export function useGetContractEvents(contractAddress) {
     if (contractAddress) {
       getTransactions();
     }
-  }, [contractAddress]);
+  }, [contractAddress, page, method]);
   return contractTransactions;
 }
 
 export function useGetMoreTransactionsInfo(event) {
-  const { tronWeb } = window;
-
   const [addTransactionInfo, setAddTransactionInfo] = useState();
 
+  async function getTransaction() {
+    const options = { method: 'GET', headers: { accept: 'application/json' } };
+
+    fetch(`https://apilist.tronscanapi.com/api/transaction-info?hash=${event.hash}`, options)
+      .then((response) => response.json())
+      .then(({ contractRet, trigger_info }) => {
+        setAddTransactionInfo({ contractRet, trigger_info });
+      })
+      // eslint-disable-next-line no-console
+      .catch((err) => console.error(err));
+  }
   useEffect(() => {
-    tronWeb.getEventByTransactionID(event.hash).then((result) => {
-      setAddTransactionInfo({
-        name: result[0]?.name,
-        // eslint-disable-next-line no-underscore-dangle
-        amount: +tronWeb.fromSun(result[0]?.result?._amount),
-      });
-    });
-    tronWeb.contract().at(event.toAddress).then(
-      (contr) => {
-        contr.blacklisted(event.ownerAddress).call({}).then((isInRefsRegistry) => {
-          setAddTransactionInfo((prev) => ({
-            ...prev,
-            blacklisted: isInRefsRegistry,
-          }));
-        });
-      },
-    );
-  }, [event]);
+    if (event.hash) {
+      getTransaction();
+    }
+  }, [event.hash]);
   return addTransactionInfo;
 }

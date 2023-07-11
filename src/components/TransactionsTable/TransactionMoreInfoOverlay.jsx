@@ -6,19 +6,6 @@ import { useGetMoreTransactionsInfo } from '../../hooks';
 const MoreInfoOverlay = React.forwardRef((props, ref) => {
   const { tronWeb } = window;
   const addTransactionInfo = useGetMoreTransactionsInfo(props.event);
-  const analyzeTriggerInfoData = (dataString, methodString) => {
-    switch (dataString.substring(0, 8)) {
-      case 'ab94d950':
-        return `deposit(${addTransactionInfo?.amount === 0 ? tronWeb.fromSun(props.event.amount) : addTransactionInfo?.amount})`;
-
-      case '3ccfd60b':
-        return `withdraw(${addTransactionInfo?.amount})`;
-
-      default:
-        return methodString;
-    }
-  };
-
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <Popover id="popover-basic" ref={ref} {...props}>
@@ -29,22 +16,18 @@ const MoreInfoOverlay = React.forwardRef((props, ref) => {
             <p>
               Method :
               {' '}
-              {analyzeTriggerInfoData(
-                props.event.trigger_info?.data,
-                props.event.trigger_info?.method,
-              )}
+              {props.event.trigger_info?.methodName}
             </p>
-            {Object.keys(props.event.trigger_info?.parameter).length > 0 ? (
+            {addTransactionInfo?.trigger_info?.parameter ? (
               <p>
                 {'Parameter :\n'}
-                { Object.entries(props.event.trigger_info?.parameter).map(([k, v]) => `\n${k}:${v}`) }
+                { Object.entries(addTransactionInfo?.trigger_info?.parameter)
+                  .map(([k, v]) => `\n${k}:${v}`) }
               </p>
-            ) : null}
-            <p>
-              Blacklisted :
-              {' '}
-              {addTransactionInfo?.blacklisted?.toString()}
-            </p>
+            ) : ''}
+            Result:
+            {' '}
+            {addTransactionInfo?.contractRet}
           </>
         ) : (
           <p>
@@ -70,7 +53,7 @@ MoreInfoOverlay.propTypes = {
     amount: PropTypes.string,
     trigger_info: PropTypes.shape({
       data: PropTypes.string,
-      method: PropTypes.string,
+      methodName: PropTypes.string,
       parameter: PropTypes.shape({}),
     }),
   }).isRequired,

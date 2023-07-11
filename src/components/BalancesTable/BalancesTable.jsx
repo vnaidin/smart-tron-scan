@@ -9,13 +9,16 @@ import CopyButton from '../CopyButton';
 
 export default function BalancesTable({ setContractToViewEvents }) {
   const contractBalances = useGetContractBalances();
-  const minimizeHashes = (link, nOfSymbols = 4) => (link && link.length !== 0 ? `${link.substring(0, nOfSymbols)}...${link.substring(link.length - nOfSymbols)}` : '');
+  /*  const minimizeHashes = (link, nOfSymbols = 4) =>
+ (link && link.length !== 0 ?
+  `${link.substring(0, nOfSymbols)}...${link.substring(link.length - nOfSymbols)}` : '');
+   */
   return (
     <Table bordered hover size="sm" responsive>
       <thead>
         <tr>
           <th>Title</th>
-          <th>Address</th>
+          {/* <th>Address</th> */}
           <th>Balance</th>
           <th>Actions</th>
         </tr>
@@ -23,22 +26,29 @@ export default function BalancesTable({ setContractToViewEvents }) {
       {contractBalances
         ? (
           <tbody>
-            {contractBalances.map((contract) => (
+            {contractBalances?.map((contract) => (
               <tr
                 key={contract.address}
               >
-                <Badge
-                  bg={contract?.limit >= contract.balance ? 'danger' : 'success'}
-                  as="td"
-                  className="ml-1 "
+                <a
+                  href={`https://tronscan.org/#/contract/${contract.address}/transactions`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <h6>
-                    {' '}
-                    {contract.title}
-                  </h6>
-                </Badge>
+                  <Badge
+                    bg={contract?.limit >= contract.balance ? 'danger' : 'success'}
+                    as="td"
+                    className="ml-1 "
+                  >
+                    <h6>
+                      {' '}
+                      {contract.title}
+                    </h6>
+                  </Badge>
+                </a>
+                <CopyButton txtToCopy={contract.address} />
 
-                <td>
+                {/* <td>
                   <a
                     href={`https://tronscan.org/#/contract/${contract.address}/transactions`}
                     target="_blank"
@@ -46,8 +56,7 @@ export default function BalancesTable({ setContractToViewEvents }) {
                   >
                     {minimizeHashes(contract.address, 5)}
                   </a>
-                  <CopyButton txtToCopy={contract.address} />
-                </td>
+                </td> */}
 
                 <td>
                   {contract.balance}
@@ -64,7 +73,7 @@ export default function BalancesTable({ setContractToViewEvents }) {
                   <Col>
                     <SendMoney
                       contractAddress={contract.address}
-                      contractType={contract.type}
+                      contractType={Number(contract.type)}
                     />
                   </Col>
 

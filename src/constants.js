@@ -25,7 +25,11 @@ export const SMART_CONTRACT_ADDRESSES = [
     title: 'Smart_Tron_USDT_Pool_22', address: 'TFmxSampsD6M9473zHyQRLEDdJzysDfYX8', type: 'usdt', limit: 1500,
   },
   {
-    title: 'TronTrade', address: 'TE6jRRZEwMSZfEvxjnDQ5uPQnDRB6wt2NL', type: 'trx', limit: 25000,
+    title: 'TronTrade',
+    address: 'TE6jRRZEwMSZfEvxjnDQ5uPQnDRB6wt2NL',
+    type: 'trx',
+    limit: 25000,
+    methods: { deposit: 'ab94d950', depositForUser: 'f384f0ae', withdraw: '3ccfd60b' },
   },
   {
     title: 'TronTrade_BONUS', address: 'TLnY7G9D9xQiQEBqJ14oUHzaYRt33PhKrN', type: 'trx', limit: 25000,
