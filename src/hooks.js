@@ -1,6 +1,5 @@
 /* eslint-disable camelcase */
 import { useEffect, useState } from 'react';
-import { SMART_CONTRACT_ADDRESSES } from './constants';
 
 export function useCheckTronInitiated() {
   const [tronIsOn, setTronIsOn] = useState();
@@ -38,36 +37,23 @@ export function useTrackWalletChange() {
   }, []);
 }
 
-export function useGetContractBalances() {
-  const [contractBalances, setContractBalances] = useState([]);
-  async function getAmount(contract, currency) {
-    const options = { method: 'GET', headers: { accept: 'application/json' }, mode: 'cors' };
+export function useGetContractBalance(address, currency) {
+  const [contractBalances, setContractBalances] = useState();
+  async function getAmount(contract, curr) {
+    const options = { method: 'GET', headers: { accept: 'application/json', 'TRON-PRO-API-KEY': '27642331-b2ef-4fc8-af35-cf6b1b041f5b' }, mode: 'cors' };
 
-    return fetch(`https://apilist.tronscanapi.com/api/account/tokens?address=${contract.address}&token=${currency}`, options)
+    return fetch(`https://apilist.tronscanapi.com/api/account/tokens?address=${contract}&token=${curr}`, options)
       .then((response) => response.json())
       .then((response) => {
-        const formedResponse = response.data.shift();
-        // console.log(formedResponse, { ...contract, balance: formedResponse.amount });
-        return ({ ...contract, balance: window.tronWeb.fromSun(formedResponse?.balance) || 0 });
+        setContractBalances(window.tronWeb.fromSun(response.data.shift()?.balance) || 0);
       })
       // eslint-disable-next-line no-console
       .catch((err) => console.error(err));
   }
 
-  const fetchData = () => {
-    Promise.all(SMART_CONTRACT_ADDRESSES.map((contract) => {
-      if (contract.type === 'usdt') {
-        return getAmount(contract, 'usdt');
-      }
-      return getAmount(contract, 'trx');
-    })).then((result) => {
-      setContractBalances(result);
-    });
-  };
-
   useEffect(() => {
-    if (contractBalances.length === 0) { fetchData(); }
-  }, [contractBalances]);
+    getAmount(address, currency);
+  }, [address]);
   return contractBalances;
 }
 
@@ -75,7 +61,7 @@ export function useGetContractEvents(contractAddress, page, method) {
   const [contractTransactions, setContractTransactions] = useState([]);
 
   async function getTransactions() {
-    const options = { method: 'GET', headers: { accept: 'application/json' } };
+    const options = { method: 'GET', headers: { accept: 'application/json', 'TRON-PRO-API-KEY': '27642331-b2ef-4fc8-af35-cf6b1b041f5b' }, mode: 'cors' };
 
     fetch(`https://apilist.tronscanapi.com/api/transaction?sort=-timestamp&count=true&limit=50&start=${50 * page}&address=${contractAddress}${method && method.length > 1 ? `&method=${method}` : ''}`, options)
       .then((response) => response.json())
@@ -96,7 +82,7 @@ export function useGetMoreTransactionsInfo(event) {
   const [addTransactionInfo, setAddTransactionInfo] = useState();
 
   async function getTransaction() {
-    const options = { method: 'GET', headers: { accept: 'application/json' } };
+    const options = { method: 'GET', headers: { accept: 'application/json', 'TRON-PRO-API-KEY': '27642331-b2ef-4fc8-af35-cf6b1b041f5b' } };
 
     fetch(`https://apilist.tronscanapi.com/api/transaction-info?hash=${event.hash}`, options)
       .then((response) => response.json())

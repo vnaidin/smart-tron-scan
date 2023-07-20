@@ -1,101 +1,76 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  Spinner, Table, Button, Col, Badge,
+  Row, /* Button, */ Col, Badge, Accordion,
 } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { useGetContractBalances } from '../../hooks';
-import SendMoney from './SendMoney';
+import { useGetContractBalance } from '../../hooks';
+// import SendMoney from './SendMoney';
 import CopyButton from '../CopyButton';
+import { SMART_CONTRACT_ADDRESSES } from '../../constants';
 
 export default function BalancesTable({ setContractToViewEvents }) {
-  const contractBalances = useGetContractBalances();
-  /*  const minimizeHashes = (link, nOfSymbols = 4) =>
- (link && link.length !== 0 ?
-  `${link.substring(0, nOfSymbols)}...${link.substring(link.length - nOfSymbols)}` : '');
-   */
+  const [currContract, setCurrContract] = useState('');
+  const contractBalance = useGetContractBalance(
+    currContract,
+    SMART_CONTRACT_ADDRESSES.find((contract) => contract.address === currContract)?.type,
+  );
+
   return (
-    <Table bordered hover size="sm" responsive>
-      <thead>
-        <tr>
-          <th>Title</th>
-          {/* <th>Address</th> */}
-          <th>Balance</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      {contractBalances
-        ? (
-          <tbody>
-            {contractBalances?.map((contract) => (
-              <tr
-                key={contract.address}
-              >
+    <Accordion defaultActiveKey="0">
+      {SMART_CONTRACT_ADDRESSES.map(({
+        title, address, type, limit,
+      }) => (
+        <Accordion.Item eventKey={address} key={address}>
+          <Accordion.Header onClick={() => {
+            setCurrContract(address);
+            setContractToViewEvents(address);
+          }}
+          >
+            {title}
+            {' '}
+            (
+            {address}
+            )
+          </Accordion.Header>
+          <Accordion.Body>
+            <Row>
+              <Col>
                 <a
-                  href={`https://tronscan.org/#/contract/${contract.address}/transactions`}
+                  href={`https://tronscan.org/#/contract/${address}/transactions`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <Badge
-                    bg={contract?.limit >= contract.balance ? 'danger' : 'success'}
+                    bg={limit >= contractBalance ? 'danger' : 'success'}
                     as="td"
                     className="ml-1 "
                   >
                     <h6>
-                      {' '}
-                      {contract.title}
+                      {' Transactions: '}
+                      {title}
                     </h6>
                   </Badge>
                 </a>
-                <CopyButton txtToCopy={contract.address} />
+                <CopyButton txtToCopy={address} />
+              </Col>
+              <Col>
+                Balance:
+                {' '}
+                {contractBalance}
+                <img
+                  className="mx-1"
+                  src={`/smart-tron-scan/${type === 'trx' ? 'trx' : 'usdt'}-logo.png`}
+                  alt={type === 0 ? 'TRX' : 'USDT'}
+                  width={15}
+                  height={15}
+                />
+              </Col>
+            </Row>
+          </Accordion.Body>
+        </Accordion.Item>
+      ))}
+    </Accordion>
 
-                {/* <td>
-                  <a
-                    href={`https://tronscan.org/#/contract/${contract.address}/transactions`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {minimizeHashes(contract.address, 5)}
-                  </a>
-                </td> */}
-
-                <td>
-                  {contract.balance}
-                  <img
-                    className="mx-1"
-                    src={`/smart-tron-scan/${contract.type === 'trx' ? 'trx' : 'usdt'}-logo.png`}
-                    alt={contract.type === 0 ? 'TRX' : 'USDT'}
-                    width={15}
-                    height={15}
-                  />
-                </td>
-
-                <td className="row m-0">
-                  <Col>
-                    <SendMoney
-                      contractAddress={contract.address}
-                      contractType={Number(contract.type)}
-                    />
-                  </Col>
-
-                  <Col className="align-items-center">
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => setContractToViewEvents(contract.address)}
-                    >
-                      Transactions
-                    </Button>
-
-                  </Col>
-
-                </td>
-              </tr>
-            ))}
-
-          </tbody>
-        )
-        : <Spinner animation="border" />}
-    </Table>
   );
 }
 
