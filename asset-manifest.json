@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/smart-tron-scan/static/css/main.d7e26831.css",
-    "main.js": "/smart-tron-scan/static/js/main.dde7637a.js",
+    "main.js": "/smart-tron-scan/static/js/main.6361cf71.js",
     "index.html": "/smart-tron-scan/index.html",
     "main.d7e26831.css.map": "/smart-tron-scan/static/css/main.d7e26831.css.map",
-    "main.dde7637a.js.map": "/smart-tron-scan/static/js/main.dde7637a.js.map"
+    "main.6361cf71.js.map": "/smart-tron-scan/static/js/main.6361cf71.js.map"
   },
   "entrypoints": [
     "static/css/main.d7e26831.css",
-    "static/js/main.dde7637a.js"
+    "static/js/main.6361cf71.js"
   ]
 }
