@@ -11,7 +11,6 @@ import MoreInfoOverlay from './TransactionMoreInfoOverlay';
 export default function TransactionsTable({ contractToViewEvents }) {
   const [currentPage, setCurrentPage] = useState(0);
   const [currentMethod, setCurrentMethod] = useState();
-  const { tronWeb } = window;
   const { data, total } = useGetContractEvents(contractToViewEvents, +currentPage, currentMethod);
   const minimizeHashes = (link, nOfSymbols = 4) => (link && link.length !== 0 ? `${link.substring(0, nOfSymbols)}...${link.substring(link.length - nOfSymbols)}` : '');
 
@@ -89,7 +88,7 @@ export default function TransactionsTable({ contractToViewEvents }) {
                   </td>
 
                   <td>
-                    {minimizeHashes(tronWeb.address?.fromHex(event.ownerAddress), 5)}
+                    {minimizeHashes(event.ownerAddress, 5)}
                     <CopyButton txtToCopy={event.ownerAddress} />
                   </td>
                   <td>
@@ -109,7 +108,7 @@ export default function TransactionsTable({ contractToViewEvents }) {
                   </td>
 
                   <td>
-                    {tronWeb.fromSun(event.amount)}
+                    {event.amount / 1000000}
                     {' '}
                     TRX
                   </td>

@@ -45,7 +45,8 @@ export function useGetContractBalance(address, currency) {
     return fetch(`https://apilist.tronscanapi.com/api/account/tokens?address=${contract}&token=${curr}`, options)
       .then((response) => response.json())
       .then((response) => {
-        setContractBalances(window.tronWeb.fromSun(response.data.shift()?.balance) || 0);
+        // eslint-disable-next-line no-unsafe-optional-chaining
+        setContractBalances(response.data.shift()?.balance / 1000000 || 0);
       })
       // eslint-disable-next-line no-console
       .catch((err) => console.error(err));
@@ -86,8 +87,8 @@ export function useGetMoreTransactionsInfo(event) {
 
     fetch(`https://apilist.tronscanapi.com/api/transaction-info?hash=${event.hash}`, options)
       .then((response) => response.json())
-      .then(({ contractRet, trigger_info }) => {
-        setAddTransactionInfo({ contractRet, trigger_info });
+      .then(({ contractRet, trigger_info, transfersAllList }) => {
+        setAddTransactionInfo({ contractRet, trigger_info, transfersAllList });
       })
       // eslint-disable-next-line no-console
       .catch((err) => console.error(err));
