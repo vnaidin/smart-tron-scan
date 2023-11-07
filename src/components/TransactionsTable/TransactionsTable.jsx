@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import {
-  Spinner, Table, Button, OverlayTrigger, Popover, Pagination, Form, Row,
+  Spinner, Table, Button, OverlayTrigger, /*  Popover, */ Pagination, Form, Row,
 } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { useGetContractEvents } from '../../hooks';
-import { SMART_CONTRACT_ADDRESSES } from '../../constants';
+import { useGetContractEvents } from '../../utils/hooks';
+import { SMART_CONTRACT_ADDRESSES } from '../../utils/constants';
 import CopyButton from '../CopyButton';
 import MoreInfoOverlay from './TransactionMoreInfoOverlay';
+import { minimizeString } from '../../utils/helpers';
 
 export default function TransactionsTable({ contractToViewEvents }) {
   const [currentPage, setCurrentPage] = useState(0);
   const [currentMethod, setCurrentMethod] = useState();
   const { data, total } = useGetContractEvents(contractToViewEvents, +currentPage, currentMethod);
-  const minimizeHashes = (link, nOfSymbols = 4) => (link && link.length !== 0 ? `${link.substring(0, nOfSymbols)}...${link.substring(link.length - nOfSymbols)}` : '');
 
   const paginationItems = Array(total ? Math.round(total / 50) + 1 : 1).fill(0).map((x, i) => (
     // eslint-disable-next-line react/no-array-index-key
@@ -25,16 +25,18 @@ export default function TransactionsTable({ contractToViewEvents }) {
   );
   return (
     <>
-      <h4 style={{ overflowWrap: 'break-word ' }}>
-        Contract:
-        {' '}
+      <h3 style={{ overflowWrap: 'break-word ' }} className="my-1 text-center">
         {currentSmartContract.title}
-        {` (${contractToViewEvents})`}
-      </h4>
+        {` (${minimizeString(contractToViewEvents, 6)})`}
+      </h3>
 
-      <Row className="my-2 d-flex">
+      <Row className="my-2">
 
-        <Pagination style={{ width: 'auto' }} className="my-0 mx-3">
+        <Pagination
+          style={{ width: 'auto' }}
+          className="my-0 mx-2 align-items-center"
+          size="sm"
+        >
           <Pagination.First onClick={() => setCurrentPage(1)} />
           <Pagination.Prev onClick={() => setCurrentPage((prev) => prev - 1)} />
           {paginationItems}
@@ -43,23 +45,29 @@ export default function TransactionsTable({ contractToViewEvents }) {
         </Pagination>
 
         {currentSmartContract.methods
-  && (
-  <Form.Select
-    aria-label="Default select example"
-    onChange={(e) => { setCurrentMethod(e.target.value); setCurrentPage(0); }}
-    style={{ width: 'auto' }}
-  >
-    <option>select method</option>
-    <option value={null}>-</option>
-    {Object.entries(
-      currentSmartContract.methods,
-    ).map(([methText, methCode]) => (
-      <option key={methCode} value={methCode}>{methText}</option>
-    ))}
-  </Form.Select>
-  )}
+          && (
+            <Form.Select
+              aria-label="Default select example"
+              onChange={(e) => { setCurrentMethod(e.target.value); setCurrentPage(0); }}
+              style={{ width: 'auto' }}
+            >
+              <option>select method</option>
+              <option value={null}>-</option>
+              {Object.entries(
+                currentSmartContract.methods,
+              ).map(([methText, methCode]) => (
+                <option key={methCode} value={methCode}>{methText}</option>
+              ))}
+            </Form.Select>
+          )}
       </Row>
-      <Table striped bordered hover size="sm" responsive>
+      <Table
+        striped
+        bordered
+        hover
+        size="sm"
+        responsive
+      >
         <thead>
           <tr>
             <th>Transaction</th>
@@ -68,7 +76,7 @@ export default function TransactionsTable({ contractToViewEvents }) {
             <th>Date</th>
             <th>Amount</th>
             {/* <th>Results</th> */}
-            <th>Cost</th>
+            {/* <th>Cost</th> */}
           </tr>
         </thead>
         {data
@@ -82,14 +90,19 @@ export default function TransactionsTable({ contractToViewEvents }) {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      {minimizeHashes(event.hash, 5)}
+                      {minimizeString(event.hash, 3)}
                     </a>
-                    <CopyButton txtToCopy={event.hash} />
+                    <CopyButton txtToCopy={event.hash} size={20} />
                   </td>
-
                   <td>
-                    {minimizeHashes(event.ownerAddress, 5)}
-                    <CopyButton txtToCopy={event.ownerAddress} />
+                    <a
+                      href={`https://tronscan.io/#/address/${event.ownerAddress}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {minimizeString(event.ownerAddress, 5)}
+                    </a>
+                    <CopyButton txtToCopy={event.ownerAddress} size={20} />
                   </td>
                   <td>
                     <OverlayTrigger
@@ -109,8 +122,13 @@ export default function TransactionsTable({ contractToViewEvents }) {
 
                   <td>
                     {event.amount / 1000000}
-                    {' '}
-                    TRX
+                    <img
+                      className="mx-1"
+                      src={`/smart-tron-scan/${currentSmartContract.type === 'trx' ? 'trx' : 'usdt'}-logo.png`}
+                      alt={currentSmartContract.type === 0 ? 'TRX' : 'USDT'}
+                      width={15}
+                      height={15}
+                    />
                   </td>
 
                   {/* <td>
@@ -119,7 +137,7 @@ export default function TransactionsTable({ contractToViewEvents }) {
                     {event.contractRet}</Button>
                   </td> */}
 
-                  <td>
+                  {/* <td>
                     <OverlayTrigger
                       trigger="click"
                       placement="auto"
@@ -142,11 +160,15 @@ export default function TransactionsTable({ contractToViewEvents }) {
                             ) : 'no data!'}
                           </Popover.Body>
                         </Popover>
-)}
+                      )}
                     >
-                      <Button variant={event.contractRet === 'SUCCESS' ? 'success' : 'danger'}>Costs</Button>
+                      <Button
+                        variant={event.contractRet === 'SUCCESS' ? 'success' : 'danger'}
+                      >
+                        Costs
+                      </Button>
                     </OverlayTrigger>
-                  </td>
+                  </td> */}
 
                 </tr>
               ))}
@@ -156,7 +178,11 @@ export default function TransactionsTable({ contractToViewEvents }) {
           : <Spinner animation="border" />}
       </Table>
       <Row className="my-2">
-        <Pagination>
+        <Pagination
+          style={{ width: 'auto' }}
+          className="my-3 mx-auto "
+          size="sm"
+        >
           <Pagination.First onClick={() => setCurrentPage(1)} />
           <Pagination.Prev onClick={() => setCurrentPage((prev) => prev - 1)} />
           {paginationItems}

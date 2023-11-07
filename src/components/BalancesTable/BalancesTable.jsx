@@ -3,12 +3,13 @@ import {
   Row, /* Button, */ Col, Badge, Accordion,
 } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { useGetContractBalance } from '../../hooks';
-// import SendMoney from './SendMoney';
+import { useGetContractBalance } from '../../utils/hooks';
+import SendMoney from './SendMoney';
 import CopyButton from '../CopyButton';
-import { SMART_CONTRACT_ADDRESSES } from '../../constants';
+import { SMART_CONTRACT_ADDRESSES } from '../../utils/constants';
+import { minimizeString } from '../../utils/helpers';
 
-export default function BalancesTable({ setContractToViewEvents }) {
+export default function BalancesTable({ setContractToViewEvents, wallet }) {
   const [currContract, setCurrContract] = useState('');
   const contractBalance = useGetContractBalance(
     currContract,
@@ -26,37 +27,45 @@ export default function BalancesTable({ setContractToViewEvents }) {
             setContractToViewEvents(address);
           }}
           >
+            <Badge
+              bg={limit >= contractBalance && address === currContract ? 'danger' : 'success'}
+              as="td"
+              className="mx-2 "
+            >
+              <p />
+            </Badge>
             {title}
             {' '}
             (
-            {address}
+            {minimizeString(address, 7)}
             )
           </Accordion.Header>
           <Accordion.Body>
-            <Row>
-              <Col>
+            <Row className="gap-1">
+              <Col
+                xs={5}
+                sm={6}
+                md={6}
+                lg={7}
+                xl={7}
+                xxl={8}
+                className="px-1 py-1"
+              >
                 <a
                   href={`https://tronscan.org/#/contract/${address}/transactions`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Badge
-                    bg={limit >= contractBalance ? 'danger' : 'success'}
-                    as="td"
-                    className="ml-1 "
-                  >
-                    <h6>
-                      {' Transactions: '}
-                      {title}
-                    </h6>
-                  </Badge>
+                  TronScan
                 </a>
-                <CopyButton txtToCopy={address} />
+                <CopyButton txtToCopy={address} size={20} />
               </Col>
-              <Col>
+              <Col
+                className="px-1 py-1"
+              >
                 Balance:
                 {' '}
-                {contractBalance}
+                <strong>{contractBalance}</strong>
                 <img
                   className="mx-1"
                   src={`/smart-tron-scan/${type === 'trx' ? 'trx' : 'usdt'}-logo.png`}
@@ -65,6 +74,21 @@ export default function BalancesTable({ setContractToViewEvents }) {
                   height={15}
                 />
               </Col>
+              {wallet && (
+              <Col
+                xs={12}
+                sm={6}
+                md={6}
+                lg={7}
+                xl={7}
+                xxl={8}
+              >
+                <SendMoney
+                  contractAddress={address}
+                  contractType={type}
+                />
+              </Col>
+              )}
             </Row>
           </Accordion.Body>
         </Accordion.Item>
@@ -76,4 +100,5 @@ export default function BalancesTable({ setContractToViewEvents }) {
 
 BalancesTable.propTypes = {
   setContractToViewEvents: PropTypes.func.isRequired,
+  wallet: PropTypes.string.isRequired,
 };

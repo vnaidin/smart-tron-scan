@@ -1,7 +1,7 @@
 import React from 'react';
 import { Popover } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { useGetMoreTransactionsInfo } from '../../hooks';
+import { useGetMoreTransactionsInfo } from '../../utils/hooks';
 
 const MoreInfoOverlay = React.forwardRef((props, ref) => {
   const addTransactionInfo = useGetMoreTransactionsInfo(props.event);

@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default function CopyButton({ txtToCopy }) {
+export default function CopyButton({ txtToCopy, size }) {
   return (
     <svg
       className="ms-2"
@@ -17,8 +17,8 @@ export default function CopyButton({ txtToCopy }) {
           console.warn("Browser doesn't support copying!");
         }
       }}
-      width="30"
-      height="30"
+      width={size}
+      height={size}
       viewBox="0 0 50 50"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -27,7 +27,11 @@ export default function CopyButton({ txtToCopy }) {
     </svg>
   );
 }
+CopyButton.defaultProps = {
+  size: 30,
+};
 
 CopyButton.propTypes = {
   txtToCopy: PropTypes.string.isRequired,
+  size: PropTypes.number,
 };
